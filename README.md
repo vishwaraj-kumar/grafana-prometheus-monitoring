@@ -1,4 +1,14 @@
-# 🧱 ARCHITECTURE (Simple samjho)
+# 📊 Prometheus & Grafana Monitoring Setup (RHEL 9)
+
+This repository documents how **I designed and implemented a complete monitoring stack** using **Prometheus, Node Exporter, and Grafana** on RHEL 9 systems.
+
+The goal of this project was to build a **clean, production-style monitoring setup** that is easy to understand, easy to scale, and suitable for real-world Linux environments. Everything here is written in **first-person**, exactly the way I implemented it.
+
+---
+
+## 🧱 Architecture Overview
+
+I followed a very simple and practical architecture:
 
 ```
 CLIENT SERVER (Node Exporter :9100)
@@ -7,19 +17,28 @@ PROMETHEUS SERVER (9090)
         ↓
 GRAFANA (3000)
 ```
+
+* Each client exposes system metrics using **Node Exporter**
+* The **Prometheus server** scrapes metrics from all clients
+* **Grafana** is used for visualization and dashboards
+
 ---
 
-# 🟢 PART 1: PROMETHEUS + GRAFANA SERVER (RHEL 9)
+# 🟢 PART 1: Prometheus + Grafana Server (RHEL 9)
 
-## 🔹 Step 0: EPEL Repository Setup on RHEL
+### 🔹 Step 0: Enable EPEL Repository
 
-```
+First, I enabled the EPEL repository on my RHEL 9 server:
+
+```bash
 dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
 ```
 
 ---
 
-## 🔹 Step 1: System update
+### 🔹 Step 1: System Update
+
+Before installing anything, I updated the system to avoid dependency issues:
 
 ```bash
 dnf update -y
@@ -27,7 +46,9 @@ dnf update -y
 
 ---
 
-## 🔹 Step 2: Required users banao
+### 🔹 Step 2: Create Required System Users
+
+For security and best practices, I created dedicated system users:
 
 ```bash
 useradd --no-create-home --shell /bin/false prometheus
@@ -36,7 +57,9 @@ useradd --no-create-home --shell /bin/false node_exporter
 
 ---
 
-## 🔹 Step 3: Prometheus install karo
+### 🔹 Step 3: Install Prometheus
+
+I downloaded and extracted the Prometheus binary manually:
 
 ```bash
 cd /tmp
@@ -45,7 +68,7 @@ tar -xvf prometheus-2.48.1.linux-amd64.tar.gz
 cd prometheus-2.48.1.linux-amd64
 ```
 
-### Files copy
+Then I created required directories and copied files:
 
 ```bash
 mkdir /etc/prometheus
@@ -55,7 +78,7 @@ cp prometheus promtool /usr/local/bin/
 cp -r consoles console_libraries /etc/prometheus/
 ```
 
-### Permission
+Permissions were set properly:
 
 ```bash
 chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
@@ -64,13 +87,15 @@ chown prometheus:prometheus /usr/local/bin/prometheus /usr/local/bin/promtool
 
 ---
 
-## 🔹 Step 4: Prometheus config (⚠️ YAHI CLIENT IP ADD HOTA HAI)
+### 🔹 Step 4: Configure Prometheus
+
+This is the most important step. Here I define **which targets Prometheus will monitor**.
 
 ```bash
 vi /etc/prometheus/prometheus.yml
 ```
 
-### ✅ FINAL WORKING CONFIG
+#### ✅ Final Working Configuration
 
 ```yaml
 global:
@@ -89,12 +114,12 @@ scrape_configs:
           - "CLIENT_IP:9100"
 ```
 
-👉 `CLIENT_IP` ko **actual client IP** se replace karo
-⚠️ Tabs use mat karna, sirf spaces
+> 🔹 I replace `CLIENT_IP` with the actual client server IP
+> 🔹 Only spaces are used (no tabs)
 
 ---
 
-## 🔹 Step 5: Prometheus service
+### 🔹 Step 5: Create Prometheus Systemd Service
 
 ```bash
 vi /etc/systemd/system/prometheus.service
@@ -117,7 +142,7 @@ WantedBy=multi-user.target
 
 ---
 
-## 🔹 Step 6: Validate + Start Prometheus
+### 🔹 Step 6: Validate and Start Prometheus
 
 ```bash
 promtool check config /etc/prometheus/prometheus.yml
@@ -127,7 +152,7 @@ systemctl start prometheus
 systemctl status prometheus
 ```
 
-Expected:
+Expected result:
 
 ```
 Active: active (running)
@@ -135,7 +160,9 @@ Active: active (running)
 
 ---
 
-## 🔹 Step 7: Node Exporter (SERVER pe bhi)
+### 🔹 Step 7: Install Node Exporter on Server
+
+Even the Prometheus server monitors itself using Node Exporter:
 
 ```bash
 cd /tmp
@@ -145,11 +172,7 @@ cp node_exporter-1.7.0.linux-amd64/node_exporter /usr/local/bin/
 chown node_exporter:node_exporter /usr/local/bin/node_exporter
 ```
 
-### Service
-
-```bash
-vi /etc/systemd/system/node_exporter.service
-```
+Systemd service:
 
 ```ini
 [Unit]
@@ -164,15 +187,9 @@ ExecStart=/usr/local/bin/node_exporter
 WantedBy=multi-user.target
 ```
 
-```bash
-systemctl daemon-reload
-systemctl enable node_exporter
-systemctl start node_exporter
-```
-
 ---
 
-## 🔹 Step 8: Grafana install
+### 🔹 Step 8: Install Grafana
 
 ```bash
 tee /etc/yum.repos.d/grafana.repo <<EOF
@@ -185,12 +202,6 @@ gpgkey=https://packages.grafana.com/gpg.key
 EOF
 ```
 
-```
-yum clean all
-yum repolist all
-```
-
-
 ```bash
 dnf install grafana -y
 systemctl enable grafana-server
@@ -199,7 +210,7 @@ systemctl start grafana-server
 
 ---
 
-## 🔹 Step 9: Firewall (SERVER)
+### 🔹 Step 9: Configure Firewall
 
 ```bash
 firewall-cmd --permanent --add-port=9090/tcp
@@ -210,9 +221,9 @@ firewall-cmd --reload
 
 ---
 
-# 🟡 PART 2: CLIENT SERVER (Node Exporter only)
+# 🟡 PART 2: Client Server (Node Exporter Only)
 
-## 🔹 Step 1: Node Exporter install
+On each client server, I installed only Node Exporter:
 
 ```bash
 useradd --no-create-home --shell /bin/false node_exporter
@@ -223,34 +234,7 @@ cp node_exporter-1.7.0.linux-amd64/node_exporter /usr/local/bin/
 chown node_exporter:node_exporter /usr/local/bin/node_exporter
 ```
 
-### Service
-
-```bash
-vi /etc/systemd/system/node_exporter.service
-```
-
-```ini
-[Unit]
-Description=Node Exporter
-After=network.target
-
-[Service]
-User=node_exporter
-ExecStart=/usr/local/bin/node_exporter
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```bash
-systemctl daemon-reload
-systemctl enable node_exporter
-systemctl start node_exporter
-```
-
----
-
-## 🔹 Step 2: Client firewall
+Firewall:
 
 ```bash
 firewall-cmd --permanent --add-port=9100/tcp
@@ -259,9 +243,9 @@ firewall-cmd --reload
 
 ---
 
-# 🔵 PART 3: VERIFICATION (MOST IMPORTANT)
+# 🔵 PART 3: Verification
 
-## ✅ Prometheus check
+### ✅ Prometheus
 
 ```
 http://PROMETHEUS_IP:9090
@@ -269,63 +253,39 @@ http://PROMETHEUS_IP:9090
 → node_exporter = UP
 ```
 
----
+### ✅ Grafana
 
-## ✅ Grafana setup
-
-### Login
-
-```
-http://GRAFANA_IP:3000
-```
-
-```
-username- admin
-password- admin
-```
-
-### Add Data Source
-
-```
-Connections → Data sources → Add
-Type: Prometheus
-URL: http://localhost:9090
-Save & Test (should be SUCCESS)
-```
+* URL: `http://GRAFANA_IP:3000`
+* Default login: `admin / admin`
+* Data source: Prometheus (`http://localhost:9090`)
+* Dashboard ID used: **1860 (Node Exporter Full)**
 
 ---
 
-### Import Dashboard
+# 🎉 Final Outcome
+
+* Prometheus successfully scraping all nodes
+* Node Exporter running on server and clients
+* Grafana dashboards displaying real-time metrics
+* Firewall and services configured properly
+
+---
+
+## 🧠 Key Learning (One-Line Rule)
 
 ```
-Dashboards → Import
-Dashboard ID: 1860
-Select data source: Prometheus
-Import
+Adding a new client = update prometheus.yml + restart Prometheus
 ```
 
 ---
 
-### Dashboard use
+### 📌 Why This Project Matters
 
-* Dashboards → Browse → **Node Exporter Full**
-* **Top-left dropdown** → client IP select karo
-* **Top-right** → Last 15 minutes
+This project demonstrates my hands-on experience with:
 
----
+* Linux system administration
+* Monitoring & observability concepts
+* Prometheus and Grafana in real environments
+* Production-style service management using systemd
 
-# 🎉 FINAL RESULT
-
-- ✔️ Prometheus running
-- ✔️ Client IP added
-- ✔️ Node Exporter working
-- ✔️ Grafana dashboard showing data
-- ✔️ Firewall enabled
-
----
-
-## 🧠 Yaad rakhne ka ONE-LINE RULE
-
-```
-Client add = prometheus.yml edit + restart prometheus
-```
+This setup can easily be extended to monitor multiple servers in enterprise environments.
