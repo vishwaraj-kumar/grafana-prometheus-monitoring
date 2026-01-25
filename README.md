@@ -185,6 +185,12 @@ gpgkey=https://packages.grafana.com/gpg.key
 EOF
 ```
 
+```
+yum clean all
+yum repolist all
+```
+
+
 ```bash
 dnf install grafana -y
 systemctl enable grafana-server
