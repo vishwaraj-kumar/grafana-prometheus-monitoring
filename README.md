@@ -279,6 +279,11 @@ http://PROMETHEUS_IP:9090
 http://GRAFANA_IP:3000
 ```
 
+```
+username- admin
+password- admin
+```
+
 ### Add Data Source
 
 ```
