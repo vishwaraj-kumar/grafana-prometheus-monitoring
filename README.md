@@ -11,6 +11,14 @@ GRAFANA (3000)
 
 # 🟢 PART 1: PROMETHEUS + GRAFANA SERVER (RHEL 9)
 
+## 🔹 Step 0:EPEL Repository Setup on RHEL
+
+```
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm -y
+```
+
+---
+
 ## 🔹 Step 1: System update
 
 ```bash
