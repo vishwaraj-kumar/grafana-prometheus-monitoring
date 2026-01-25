@@ -279,13 +279,17 @@ Adding a new client = update prometheus.yml + restart Prometheus
 
 ---
 
-### 📌 Why This Project Matters
+### 📌 Conclusion
 
-This project demonstrates my hands-on experience with:
+This project gave me practical experience in setting up a Linux monitoring system using Prometheus, Node Exporter, and Grafana.
+I configured services, firewall rules, and monitoring targets in a way that reflects real-world system administration practices. The setup is simple, reliable, and easy to manage.
+The architecture allows new servers to be added easily by updating the Prometheus configuration, making it suitable for scalable and enterprise environments.
+Overall, this project helped me strengthen my understanding of monitoring, Linux administration, and production-style service management.
 
-* Linux system administration
-* Monitoring & observability concepts
-* Prometheus and Grafana in real environments
-* Production-style service management using systemd
+---
 
-This setup can easily be extended to monitor multiple servers in enterprise environments.
+## ✍️ Author
+
+**Vishwaraj Kumar**  
+🔗 [GitHub Profile](https://github.com/vishwaraj-kumar)  
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/vishwaraj-kumar/)
