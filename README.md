@@ -1,5 +1,3 @@
----
-
 # 🧱 ARCHITECTURE (Simple samjho)
 
 ```
@@ -9,7 +7,6 @@ PROMETHEUS SERVER (9090)
         ↓
 GRAFANA (3000)
 ```
-
 ---
 
 # 🟢 PART 1: PROMETHEUS + GRAFANA SERVER (RHEL 9)
