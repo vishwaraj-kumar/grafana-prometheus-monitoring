@@ -300,11 +300,11 @@ Import
 
 # 🎉 FINAL RESULT
 
-✔️ Prometheus running
-✔️ Client IP added
-✔️ Node Exporter working
-✔️ Grafana dashboard showing data
-✔️ Firewall enabled
+- ✔️ Prometheus running
+- ✔️ Client IP added
+- ✔️ Node Exporter working
+- ✔️ Grafana dashboard showing data
+- ✔️ Firewall enabled
 
 ---
 
