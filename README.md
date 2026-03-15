@@ -153,6 +153,8 @@ mkdir /var/lib/prometheus
 
 ### Copy Required Files
 
+I copied the necessary binaries and console files.
+
 ```
 cp prometheus promtool /usr/local/bin/
 cp -r consoles console_libraries /etc/prometheus/
