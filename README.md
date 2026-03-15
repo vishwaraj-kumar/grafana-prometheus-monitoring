@@ -549,3 +549,11 @@ The setup includes:
 - Grafana for **data visualization**
 
 This monitoring system helps administrators monitor servers in **real time** and quickly detect performance issues.
+
+## ✍️ Author
+
+**Vishwaraj Kumar**  
+🔗 [GitHub Profile](https://github.com/vishwaraj-kumar)  
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/vishwaraj-kumar/)
+
+---
