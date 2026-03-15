@@ -20,6 +20,7 @@ For this project I used the following tools:
 
 ### Architecture
 
+```
 Client Server(s)  
 (Node Exporter running on servers)
 
@@ -31,6 +32,15 @@ Prometheus Server
         |  Data Source
         |
 Grafana Dashboard
+```
+
+```
+CLIENT SERVER (Node Exporter :9100)
+        ↓
+PROMETHEUS SERVER (9090)
+        ↓
+GRAFANA (3000)
+```
 
 
 In this setup:
