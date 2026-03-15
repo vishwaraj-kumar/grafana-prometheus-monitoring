@@ -162,6 +162,8 @@ cp -r consoles console_libraries /etc/prometheus/
 
 ### Set Proper Permissions
 
+Next, I assigned the correct ownership to the Prometheus user.
+
 ```
 chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
 chown prometheus:prometheus /usr/local/bin/prometheus /usr/local/bin/promtool
